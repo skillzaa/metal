@@ -1,5 +1,5 @@
 {
-  "name": "metal",
+  "name": "metal99",
   "version": "0.0.1",
   "description": "A Javascript 2d drawing library",
   "main": "index.js",
@@ -23,10 +23,7 @@
   },
   "homepage": "https://github.com/skillzaa/bilzaa2d#readme",
   "dependencies": {
-    "@bilzaa.com/arrayofobjects": "^1.1.6",
-    "aninumber": "^1.1.1",
-    "playhead99": "^1.1.0",
-    "shapes99": "^0.1.9"
+    "@bilzaa.com/arrayofobjects": "^1.1.6"
   },
   "devDependencies": {
     "jest": "^26.6.3",

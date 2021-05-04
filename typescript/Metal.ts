@@ -93,59 +93,57 @@ module.exports =  class Metal {
       this.ctx.restore(); 
   }//draw circle
   
-  drawTriangle(attributes){
-  this.ctx.save();  
-    
-  // this.ctx.fillStyle = attributes.getAttr("color");
-  this.ctx.beginPath();
+drawTriangle(attributes){
+this.ctx.save();  
   
+// this.ctx.fillStyle = attributes.getAttr("color");
+this.ctx.beginPath();
+
+this.ctx.lineWidth = attributes.getAttr("lineWidth");
+//move to left-bottom
+  this.ctx.moveTo(attributes.getAttr("x"),attributes.getAttr("y")+attributes.getAttr("height"));
+  //line to right bottom cornot 
+  this.ctx.lineTo(attributes.getAttr("x")+attributes.getAttr("width"),attributes.getAttr("y")+attributes.getAttr("height"));
+  //top cornor
+  this.ctx.lineTo(attributes.getAttr("x")+attributes.getAttr("width")/2,attributes.getAttr("y"));
+  
+  this.ctx.lineTo(attributes.getAttr("x"),attributes.getAttr("y")+attributes.getAttr("height"));
+//  this.ctx.fill();
+  
+      if(attributes.getAttr("filled") == true){
+        this.ctx.fillStyle = attributes.getAttr("color");
+        this.ctx.fill();
+      }else{
+        this.ctx.strokeStyle = attributes.getAttr("color");
+        this.ctx.stroke();
+      }
+
+this.ctx.restore();  
+}
+
+  getCtxValues(attributes){
+
+//fillstyle is for internal use dont show it to users
+  this.ctx.fillStyle = attributes.getAttr("color");
+  this.ctx.strokeStyle = attributes.getAttr("color");
+  this.ctx.shadowColor = attributes.getAttr("shadowColor");
+  this.ctx.shadowBlur = attributes.getAttr("shadowBlur");
+  this.ctx.shadowOffsetX = attributes.getAttr("shadowOffsetX");
+  this.ctx.shadowOffsetY = attributes.getAttr("shadowOffsetY");
   this.ctx.lineWidth = attributes.getAttr("lineWidth");
-  //move to left-bottom
-    this.ctx.moveTo(attributes.getAttr("x"),attributes.getAttr("y")+attributes.getAttr("height"));
-   //line to right bottom cornot 
-    this.ctx.lineTo(attributes.getAttr("x")+attributes.getAttr("width"),attributes.getAttr("y")+attributes.getAttr("height"));
-    //top cornor
-    this.ctx.lineTo(attributes.getAttr("x")+attributes.getAttr("width")/2,attributes.getAttr("y"));
-    
-    this.ctx.lineTo(attributes.getAttr("x"),attributes.getAttr("y")+attributes.getAttr("height"));
-  //  this.ctx.fill();
-    
-        if(attributes.getAttr("filled") == true){
-          this.ctx.fillStyle = attributes.getAttr("color");
-          this.ctx.fill();
-        }else{
-          this.ctx.strokeStyle = attributes.getAttr("color");
-          this.ctx.stroke();
-        }
+  this.ctx.setLineDash([attributes.getAttr("lineDashSize"),attributes.getAttr("lineDashGap")]);
+
+}//getAttributes
   
-  this.ctx.restore();  
-  }
-  
-  
-    
-   getCtxValues(attributes){
-  
-  //fillstyle is for internal use dont show it to users
-    this.ctx.fillStyle = attributes.getItem("color").value;
-    this.ctx.strokeStyle = attributes.getItem("color").value;
-    this.ctx.shadowColor = attributes.getItem("shadowColor").value;
-    this.ctx.shadowBlur = attributes.getItem("shadowBlur").value;
-    this.ctx.shadowOffsetX = attributes.getItem("shadowOffsetX").value;
-    this.ctx.shadowOffsetY = attributes.getItem("shadowOffsetY").value;
-    this.ctx.lineWidth = attributes.getItem("lineWidth").value;
-    this.ctx.setLineDash([attributes.getAttr("lineDashSize"),attributes.getAttr("lineDashGap")]);
-  
-  }//getAttributes
-  
-   translateCanvas(attributes){
-    this.ctx.translate(attributes.getItem("x").value + (attributes.getItem("width").value / 2), attributes.getItem("y").value + (attributes.getItem("height").value / 2));
-  }   
+  translateCanvas(attributes){
+  this.ctx.translate(attributes.getAttr("x") + (attributes.getAttr("width") / 2), attributes.getAttr("y") + (attributes.getAttr("height") / 2));
+}   
   
    unTranslateCanvas(attributes){
-    this.ctx.translate(-(attributes.getItem("x").value + (attributes.getItem("width").value / 2)), -(attributes.getItem("y").value + (attributes.getItem("height").value / 2)));
+    this.ctx.translate(-(attributes.getAttr("x") + (attributes.getAttr("width") / 2)), -(attributes.getAttr("y") + (attributes.getAttr("height") / 2)));
   }
    rotateCanvas(attributes){
-    this.ctx.rotate((attributes.getItem("currentRotateAngle").value) * Math.PI / 180);
+    this.ctx.rotate((attributes.getAttr("currentRotateAngle")) * Math.PI / 180);
   }
   drawEllipse(){
     this.ctx.ellipse(100, 100, 50, 75, 45 * Math.PI/180, 0, 2 * Math.PI);

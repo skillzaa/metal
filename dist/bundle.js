@@ -1,5 +1,192 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
+/**
+ * 1--every objects must have a unique "name"  field
+ * 2--every OBJECT MUST HAVE "value" field.
+ */
+// const IItem = require("IItem");
+const Validator = require('validator99');
+const val = new Validator();
+// console.log(val);
+// val.isNumber("string",true);
+module.exports = class ArrayOfObjects {
+    constructor() {
+        this.data = [];
+    }
+    add(name, value = "") {
+        val.isString(name, true, "The name is compulsary and should be of type string");
+        if (this.isUnique(name) === true) {
+            const a = {};
+            a.name = name;
+            a.value = value;
+            this.data.push(a);
+            return a;
+        }
+        else {
+            throw new Error(`Please Provide a unique and valid string name for the object. The name ::${name} already exists`);
+        }
+    }
+    isUnique(name) {
+        if (typeof name == "undefined") {
+            return false;
+        }
+        let uniqueOrNot = true;
+        for (let idx = 0; idx < this.data.length; idx++) {
+            const element = this.data[idx];
+            if (element.name === name) {
+                uniqueOrNot = false;
+            }
+        }
+        return uniqueOrNot;
+    }
+    get length() {
+        return this.data.length;
+    }
+    getItem(name) {
+        val.isString(name, true, "The name should be of type string");
+        for (let idx = 0; idx < this.data.length; idx++) {
+            if (this.data[idx].name === name) {
+                return this.data[idx];
+            }
+        }
+        return false;
+    } //.....................
+    getAttr(name, field = "value") {
+        val.isString(name, true, "The name should be of type string");
+        for (let idx = 0; idx < this.data.length; idx++) {
+            const thisName = this.data[idx].name;
+            if (thisName == name) {
+                return this.data[idx][field];
+            }
+        }
+        return false;
+    }
+    setAttr(name, value, field = "value") {
+        val.isString(name, true, "The name should be of type string");
+        for (let idx = 0; idx < this.data.length; idx++) {
+            if (this.data[idx].name == name) {
+                this.data[idx][field] = value;
+                return this.data[idx][field];
+            }
+        }
+        return true;
+    } //......
+    getObjectsByName(argumentsRequired = []) {
+        const ret = [];
+        this.data.forEach(bd => {
+            argumentsRequired.forEach(ag => {
+                if (ag == bd.name) {
+                    ret.push(bd);
+                }
+            });
+        });
+        return ret;
+    }
+    getItemsByNames(argumentsRequired = []) {
+        const ret = [];
+        this.data.forEach(bd => {
+            argumentsRequired.forEach(ag => {
+                if (ag == bd.name) {
+                    ret.push(bd);
+                }
+            });
+        });
+        return ret;
+    }
+};
+
+},{"validator99":2}],2:[function(require,module,exports){
+"use strict";
+module.exports = class Validator {
+    constructor() {
+        this.throwExceptionFlag = false;
+    } //const
+    isNumber(no, shout = false, message = "This is not a Number") {
+        //if (data === parseInt(data, 10))
+        if ((typeof no) != "number") {
+            if (shout === true) {
+                throw new Error(message);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+    }
+    isInteger(no, shout = false, message = "This is not an Integer") {
+        if (Number.isInteger(no) === false) {
+            if (shout === true) {
+                throw new Error(message);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+    }
+    isSmaller(smaller, bigger, shout = false, message = "First Number is not smaller than the second number") {
+        if (bigger < smaller) {
+            if (shout === true) {
+                throw new Error(message);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+    } //fn
+    wholeNumber(no, shout = false) {
+        this.isNumber(no, shout);
+        return Number(no.toFixed(0));
+    }
+    isString(str, shout = false, message = "This value is not string") {
+        if (typeof str === 'string') {
+            return true;
+        }
+        else if (shout === true) {
+            throw new Error(message);
+        }
+        else {
+            return false;
+        }
+    }
+    isBoolean(b, shout = false, message = "This value is not boolean") {
+        if (typeof b === 'boolean') {
+            return true;
+        }
+        else if (shout === true) {
+            throw new Error(message);
+        }
+        else {
+            return false;
+        }
+    }
+    isSNB(snb, shout = false, message = "This value is not boolean or string or number") {
+        const isString = this.isString(snb, false);
+        const isBoolean = this.isBoolean(snb, false);
+        const isNumber = this.isNumber(snb, false);
+        if (isString == false && isBoolean == false && isNumber == false) {
+            if (shout === true) {
+                throw new Error(message);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
+    }
+}; //class
+
+},{}],3:[function(require,module,exports){
+"use strict";
 const drawArc = require('./drawArc');
 const drawText = require('./drawText');
 const drawRectangle = require('./drawRectangle');
@@ -100,23 +287,23 @@ module.exports = class Metal {
     }
     getCtxValues(attributes) {
         //fillstyle is for internal use dont show it to users
-        this.ctx.fillStyle = attributes.getItem("color").value;
-        this.ctx.strokeStyle = attributes.getItem("color").value;
-        this.ctx.shadowColor = attributes.getItem("shadowColor").value;
-        this.ctx.shadowBlur = attributes.getItem("shadowBlur").value;
-        this.ctx.shadowOffsetX = attributes.getItem("shadowOffsetX").value;
-        this.ctx.shadowOffsetY = attributes.getItem("shadowOffsetY").value;
-        this.ctx.lineWidth = attributes.getItem("lineWidth").value;
+        this.ctx.fillStyle = attributes.getAttr("color");
+        this.ctx.strokeStyle = attributes.getAttr("color");
+        this.ctx.shadowColor = attributes.getAttr("shadowColor");
+        this.ctx.shadowBlur = attributes.getAttr("shadowBlur");
+        this.ctx.shadowOffsetX = attributes.getAttr("shadowOffsetX");
+        this.ctx.shadowOffsetY = attributes.getAttr("shadowOffsetY");
+        this.ctx.lineWidth = attributes.getAttr("lineWidth");
         this.ctx.setLineDash([attributes.getAttr("lineDashSize"), attributes.getAttr("lineDashGap")]);
     } //getAttributes
     translateCanvas(attributes) {
-        this.ctx.translate(attributes.getItem("x").value + (attributes.getItem("width").value / 2), attributes.getItem("y").value + (attributes.getItem("height").value / 2));
+        this.ctx.translate(attributes.getAttr("x") + (attributes.getAttr("width") / 2), attributes.getAttr("y") + (attributes.getAttr("height") / 2));
     }
     unTranslateCanvas(attributes) {
-        this.ctx.translate(-(attributes.getItem("x").value + (attributes.getItem("width").value / 2)), -(attributes.getItem("y").value + (attributes.getItem("height").value / 2)));
+        this.ctx.translate(-(attributes.getAttr("x") + (attributes.getAttr("width") / 2)), -(attributes.getAttr("y") + (attributes.getAttr("height") / 2)));
     }
     rotateCanvas(attributes) {
-        this.ctx.rotate((attributes.getItem("currentRotateAngle").value) * Math.PI / 180);
+        this.ctx.rotate((attributes.getAttr("currentRotateAngle")) * Math.PI / 180);
     }
     drawEllipse() {
         this.ctx.ellipse(100, 100, 50, 75, 45 * Math.PI / 180, 0, 2 * Math.PI);
@@ -165,7 +352,7 @@ module.exports = class Metal {
     }
 };
 
-},{"./drawArc":2,"./drawRectangle":3,"./drawText":4}],2:[function(require,module,exports){
+},{"./drawArc":4,"./drawRectangle":5,"./drawText":6}],4:[function(require,module,exports){
 "use strict";
 module.exports = function drawArc(attributes) {
     this.ctx.save();
@@ -185,20 +372,19 @@ module.exports = function drawArc(attributes) {
     this.ctx.restore();
 }; //fn
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 module.exports = function drawRectangle(attributes) {
-    this.saveCtx();
+    this.ctx.save();
     this.getCtxValues(attributes);
     this.translateCanvas(attributes);
-    this.rotateCanvas(attributes);
+    this.ctx.rotate((Math.PI / 180) * attributes.getAttr("currentRotateAngle"));
     this.unTranslateCanvas(attributes);
-    //}   
     //--------------draw rect-- if visible
     if ((attributes.getAttr("transparent") === false)) {
         /////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////
         this.ctx.globalAlpha = attributes.getAttr("opacity");
+        this.ctx.lineCap = "round";
         if (attributes.getAttr("filled") == true) {
             this.ctx.fillStyle = attributes.getAttr("color");
             this.ctx.fillRect(attributes.getAttr("x"), attributes.getAttr("y"), attributes.getAttr("width"), attributes.getAttr("height"));
@@ -207,15 +393,12 @@ module.exports = function drawRectangle(attributes) {
             this.ctx.strokeStyle = attributes.getAttr("color");
             this.ctx.strokeRect(attributes.getAttr("x"), attributes.getAttr("y"), attributes.getAttr("width"), attributes.getAttr("height"));
         }
-        /////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////
-    }
-    //------------------------------
-    this.restoreCtx();
+    } //outer if
+    this.ctx.restore();
     //--------------------------------------------
 }; //draw ends
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 module.exports = function drawText(attributes) {
     this.saveCtx();
@@ -234,11 +417,57 @@ module.exports = function drawText(attributes) {
     this.ctx.restore();
 };
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 const Metal = require('./Metal');
-const log = console.log;
 const metal = new Metal();
-log(metal);
+const getAttributes = require('../uiTests/simpleRect');
+const attributes = getAttributes("rect");
+attributes.setAttr("currentRotateAngle", 93);
+metal.drawRectangle(attributes);
 
-},{"./Metal":1}]},{},[5]);
+},{"../uiTests/simpleRect":8,"./Metal":3}],8:[function(require,module,exports){
+//import ArrayOfObjects from "../../modules/ArrayOfObjects.js";
+const ArrayOfObjects = require('@bilzaa.com/arrayofobjects');
+
+module.exports = function getAttributes (name){
+const attributes = new ArrayOfObjects();
+
+//--The name--
+attributes.add(name, name);
+//--x,y,width,height--
+attributes.add("x", 100);
+attributes.add("y", 100);
+attributes.add("width", 100);
+attributes.add("height", 100);
+//--rotation--
+attributes.add("rotateClockwise", true);
+//---the angle at which);the obj is currently rotated--this is also rpm / rps
+attributes.add("currentRotateAngle", 0);   
+//--colors--
+attributes.add("color", "green");
+attributes.add("opacity", 1 );//----------???? transparency
+/**this just became border */
+attributes.add("lineWidth",5);//----------???? transparency
+/**there is no strokeStyle since the color is fillStyle as well as strokeStyle since we have border feature coming later so we do not need this confusion now */
+//attributes.add({ name: "strokeStyle", value: "#F0000" });
+//--shadows--
+attributes.add("shadowColor","grey");
+attributes.add("shadowBlur",0);
+attributes.add("shadowOffsetX",0);
+attributes.add("shadowOffsetY",0);  
+// if filled draw filled if not draw border only
+attributes.add("filled", false);  
+
+attributes.add("lineDashSize", 1);    
+attributes.add("lineDashGap", 0);
+
+attributes.add("drawBoundingRectangle", true);    
+attributes.add("boundingRectangleColor", "red");    
+attributes.add("boundingRectanglePadding", 20);    
+//--20 items
+return attributes;
+}
+//====================================================
+// export default getBaseAttributes;
+},{"@bilzaa.com/arrayofobjects":1}]},{},[7]);
