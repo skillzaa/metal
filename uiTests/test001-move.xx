@@ -1,0 +1,16 @@
+"use strict";
+const log = console.log;
+
+
+const Bilzaa2d = require("./bilzaa2d");
+const bilzaa2d = new Bilzaa2d();
+const arc1 = bilzaa2d.shapes.addArc("arc1");
+arc1.moveDiagonal(1,5,1,900,1,900);
+const rect = bilzaa2d.shapes.addRectangle("rect");
+rect.moveDiagonal(6,10,1,900,1,900);
+const txt = bilzaa2d.shapes.addText("txt");
+txt.moveDiagonal(10,15,1,900,1,900);
+
+
+log(bilzaa2d);
+bilzaa2d.play();
